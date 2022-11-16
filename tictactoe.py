@@ -22,10 +22,21 @@ def player(board):
     """
     Returns player who has the next turn on a board.
     """
-    if all(board):
+    cntX = 0
+    cntO = 0
+
+    for i in range(3):
+        for j in range(3):
+            if board[i][j] == X:
+                cntX += 1
+            elif board[i][j] == O:
+                cntO += 1
+    if cntO > cntX:
         return X
-    else:
+    elif cntX > cntO:
         return O
+    else:
+        return X
 
 
 def actions(board):
@@ -52,15 +63,15 @@ def result(board, action):
         j = action[1]
         new_board[i][j] = move
         return new_board
-    else:
-        raise NameError("Invalid move!")
+    # else:
+    #     raise NameError("Invalid move!")
 
 
 def winner(board):
     """
     Returns the winner of the game, if there is one.
     """
-    if terminal(board) == True:
+    if terminal(board):
         j = 0
         while j < 3:
             if board[j][0] == board[j][1] and board[j][0] == board[j][2] == X:
@@ -136,8 +147,61 @@ def utility(board):
         return 0
 
 
+def max_val(state):
+    v = -999
+    if terminal(state):
+        return utility(state)
+
+    for action in actions(state):
+        v = max(v, min_val(result(state, action)))
+
+    return v
+
+
+def min_val(state):
+    v = 999
+    p = 0
+    if terminal(state):
+        return utility(state)
+
+    for action in actions(state):
+        v = min(v, max_val(result(state, action)))
+        p += 1
+    print(f'min val {p}')
+    return v
+
+
 def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
-    return 0
+    if player(board) == X and not terminal(board):
+        moves = []
+        score = []
+        prev = 0
+        for action in actions(board):
+            moves.append(action)
+            score.append(max_val(result(board, action)))
+            if max_val(result(board, action)) >= prev:
+                break
+            prev = max_val(result(board, action))
+        tot = list(zip(moves, score))
+        print('minimax', prev)
+        tot.sort(key=lambda x: x[1])
+        return tot[0][0]
+
+    if player(board) == O and not terminal(board):
+        moves = []
+        score = []
+        prev = 0
+        for action in actions(board):
+
+            moves.append(action)
+            score.append(min_val(result(board, action)))
+            if min_val(result(board, action)) <= prev:
+                break
+            prev = min_val(result(board, action))
+
+        tot = list(zip(moves, score))
+        tot.sort(key=lambda x: x[1])
+        return tot[0][0]

@@ -8,9 +8,9 @@ def initial_state():
     """
     Returns starting state of the board.
     """
-    return [[EMPTY, X, EMPTY],
-            [EMPTY, X, EMPTY],
-            [EMPTY, X, EMPTY]]
+    return [[EMPTY, X, O],
+            [EMPTY, X, O],
+            [EMPTY, O, X]]
 
 board = initial_state()
 if tictactoe.terminal(board) == True:
@@ -21,5 +21,5 @@ else:
     print("Keep playing!")
     act = tictactoe.actions(board)
     print(act)
-    print(tictactoe.result(board, (0, 0)))
+    print(tictactoe.result(board, (1, 0)))
     print(board)
